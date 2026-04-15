@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoChym — Web3 Pro Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050810;--bg2:#0a0f1e;--bg3:#0f1628;--panel:#111827;
+  --border:rgba(99,179,237,0.15);--border2:rgba(99,179,237,0.35);
+  --accent:#63b3ed;--accent2:#7c3aed;--accent3:#10b981;--accent4:#f59e0b;--accent5:#ef4444;
+  --text:#e2e8f0;--muted:#64748b;--muted2:#94a3b8;
+  --mono:'Space Mono',monospace;--sans:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(99,179,237,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,179,237,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.header{position:sticky;top:0;z-index:100;background:rgba(5,8,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:10px}
+.logo-dot{width:9px;height:9px;background:var(--accent3);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.hbadge{font-family:var(--mono);font-size:10px;color:var(--accent3);border:1px solid rgba(16,185,129,.3);padding:3px 10px;border-radius:20px}
+.nav-wrap{background:rgba(5,8,16,.85);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:60px;z-index:99}
+.nav{display:flex;gap:4px;overflow-x:auto;padding:12px 0;scrollbar-width:none;max-width:1200px;margin:0 auto}
+.nav::-webkit-scrollbar{display:none}
+.nb{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:8px 15px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:600;transition:all .18s;white-space:nowrap}
+.nb:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.nb.active{background:rgba(99,179,237,.1);border-color:var(--accent);color:var(--accent)}
+.main{max-width:1200px;margin:0 auto;padding:28px 24px}
+.panel{display:none;animation:fi .2s ease}
+.panel.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.stitle{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:5px}
+.sdesc{font-size:13px;color:var(--muted2);margin-bottom:22px;line-height:1.6}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+label{display:block;font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:1px;margin-bottom:5px;margin-top:14px}
+label:first-child{margin-top:0}
+input,select,textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text);font-family:var(--sans);font-size:13px;outline:none;transition:border-color .18s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--panel)}
+textarea{resize:vertical;min-height:90px;line-height:1.6}
+.btn-run{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;margin-top:14px;border-radius:9px;border:none;background:linear-gradient(135deg,#7c3aed,#63b3ed);color:#fff;font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;transition:opacity .18s,transform .18s}
+.btn-run:hover{opacity:.85;transform:translateY(-1px)}
+.btn-run:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-sm{background:var(--bg3);border:1px solid var(--border);color:var(--muted2);font-size:11px;padding:6px 14px;border-radius:7px;cursor:pointer;font-family:var(--mono);transition:all .15s}
+.btn-sm:hover{border-color:var(--border2);color:var(--text)}
+.out{margin-top:14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;display:none}
+.out.show{display:block}
+.out-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.out-hdr span{font-size:10px;color:var(--accent3);font-family:var(--mono)}
+.cpbtn{font-family:var(--mono);font-size:10px;color:var(--muted2);background:var(--bg3);border:1px solid var(--border);padding:4px 10px;border-radius:5px;cursor:pointer}
+.cpbtn:hover{color:var(--accent);border-color:var(--accent)}
+.out-body{color:var(--muted2);white-space:pre-wrap;line-height:1.75;font-size:12px;font-family:var(--mono);word-break:break-word}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(99,179,237,.2);border-top-color:var(--accent);border-radius:50%;animation:sp .65s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ldg{display:flex;align-items:center;gap:10px;color:var(--muted2);font-family:var(--mono);font-size:12px;padding:18px 0}
+.badge{display:inline-block;font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;border:1px solid}
+.b-blue{background:rgba(99,179,237,.1);color:var(--accent);border-color:rgba(99,179,237,.25)}
+.b-green{background:rgba(16,185,129,.1);color:var(--accent3);border-color:rgba(16,185,129,.25)}
+.b-amber{background:rgba(245,158,11,.1);color:var(--accent4);border-color:rgba(245,158,11,.25)}
+.b-red{background:rgba(239,68,68,.1);color:var(--accent5);border-color:rgba(239,68,68,.25)}
+.b-purple{background:rgba(124,58,237,.1);color:#a78bfa;border-color:rgba(124,58,237,.25)}
+.srow{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px}
+.sc-v{font-family:var(--mono);font-size:20px;font-weight:700;margin-bottom:2px}
+.sc-l{font-size:11px;color:var(--muted2)}
+.up{color:var(--accent3)}.dn{color:var(--accent5)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:7px;max-height:260px;overflow-y:auto;margin-top:8px}
+.tgrid::-webkit-scrollbar{width:4px}
+.tgrid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.ti{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
+.ti:hover{border-color:var(--border2)}
+.ti.sel{border-color:var(--accent);background:rgba(99,179,237,.07)}
+.ts{font-family:var(--mono);font-size:12px;font-weight:700}
+.tp{font-size:10px;color:var(--muted)}
+.tc{font-family:var(--mono);font-size:11px;font-weight:700}
+.rbar{height:7px;border-radius:4px;background:var(--bg2);overflow:hidden;margin:7px 0}
+.rfill{height:100%;border-radius:4px;transition:width .5s ease}
+.jcard{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:15px;margin-bottom:9px;transition:border-color .15s}
+.jcard:hover{border-color:var(--border2)}
+.jtop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px}
+.jtitle{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.jco{font-size:12px;color:var(--muted2)}
+.jtags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.jtag{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:20px;border:1px solid var(--border)}
+.jt-remote{background:rgba(16,185,129,.08);color:var(--accent3);border-color:rgba(16,185,129,.2)}
+.jt-type{background:rgba(99,179,237,.07);color:var(--accent);border-color:rgba(99,179,237,.18)}
+.jt-date{background:var(--bg2);color:var(--muted2)}
+.jsrc{font-family:var(--mono);font-size:10px;margin-top:5px}
+.japply{font-family:var(--mono);font-size:11px;color:#a78bfa;text-decoration:none;padding:4px 10px;border:1px solid rgba(124,58,237,.3);border-radius:5px;transition:all .18s;white-space:nowrap;flex-shrink:0}
+.japply:hover{background:rgba(124,58,237,.1)}
+.dex-row{display:flex;gap:9px}
+.dex-row input{flex:1}
+.footer{text-align:center;padding:28px 24px 44px;color:var(--muted);font-family:var(--mono);font-size:11px;border-top:1px solid var(--border);margin-top:40px}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.main{padding:16px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo"><div class="logo-dot"></div>LoChym</div>
+    <div class="hbadge">WEB3 PRO HUB · FREE</div>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <div class="nav">
+    <button class="nb active" onclick="sw('live')">🔴 Live Jobs</button>
+    <button class="nb" onclick="sw('job')">💼 Job Finder</button>
+    <button class="nb" onclick="sw('tr')">🌐 Translator</button>
+    <button class="nb" onclick="sw('cc')">✏️ Content</button>
+    <button class="nb" onclick="sw('dd')">🔍 Due Diligence</button>
+    <button class="nb" onclick="sw('bnb')">📈 Binance Scan</button>
+    <button class="nb" onclick="sw('meme')">🔥 Memecoin</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- LIVE JOBS -->
+<div id="p-live" class="panel active">
+  <div class="stitle">// LIVE WEB3 JOBS</div>
+  <div class="sdesc">Tự động quét việc làm Web3 đang tuyển dụng — cập nhật mỗi lần mở app</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+      <div style="flex:2;min-width:160px"><label style="margin-top:0">TÌM KIẾM</label><input id="lj-q" placeholder="moderator, ambassador, community..." oninput="filterJobs()"></div>
+      <div style="flex:1;min-width:120px"><label style="margin-top:0">CATEGORY</label>
+        <select id="lj-cat" onchange="filterJobs()">
+          <option value="">Tất cả</option>
+          <option value="community">Community / Mod</option>
+          <option value="content">Content / Writer</option>
+          <option value="marketing">Marketing</option>
+          <option value="dev">Developer</option>
+          <option value="bd">Business Dev</option>
+          <option value="other">Khác</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:110px"><label style="margin-top:0">REMOTE</label>
+        <select id="lj-rem" onchange="filterJobs()">
+          <option value="">Tất cả</option>
+          <option value="1">Remote Only</option>
+        </select>
+      </div>
+      <button class="btn-sm" style="margin-bottom:1px" onclick="loadJobs()">⟳ Refresh</button>
+    </div>
+  </div>
+  <div class="srow">
+    <div class="sc"><div class="sc-v" id="st-tot">—</div><div class="sc-l">Tổng việc</div></div>
+    <div class="sc"><div class="sc-v" id="st-rem">—</div><div class="sc-l">Remote</div></div>
+    <div class="sc"><div class="sc-v" id="st-new">—</div><div class="sc-l">Mới ≤24h</div></div>
+    <div class="sc"><div class="sc-v" id="st-src">3</div><div class="sc-l">Nguồn</div></div>
+  </div>
+  <div id="lj-list"><div class="ldg"><div class="spin"></div>Đang tải danh sách việc làm...</div></div>
+  <div class="card" style="margin-top:18px;border-color:rgba(124,58,237,.3)">
+    <div style="font-family:var(--mono);font-size:10px;color:#a78bfa;letter-spacing:2px;margin-bottom:7px">// AI JOB MATCH</div>
+    <div style="font-size:13px;color:var(--muted2);margin-bottom:10px">Nhập kỹ năng → AI gợi ý job phù hợp nhất từ danh sách đang hiển thị</div>
+    <div style="display:flex;gap:8px">
+      <input id="lj-skill" placeholder="vd: Discord mod, dịch EN-VI, DeFi, content..." style="flex:1">
+      <button class="btn-sm" style="padding:10px 16px" onclick="aiMatch()">🤖 Match</button>
+    </div>
+    <div id="lj-match" style="display:none;margin-top:10px;background:var(--bg2);border:1px solid rgba(124,58,237,.2);border-radius:8px;padding:13px;font-size:12px;line-height:1.7;color:var(--muted2);font-family:var(--mono);white-space:pre-wrap"></div>
+  </div>
+</div>
+
+<!-- JOB FINDER / CV -->
+<div id="p-job" class="panel">
+  <div class="stitle">// JOB FINDER + CV BUILDER</div>
+  <div class="sdesc">Nhập kỹ năng và role muốn apply → AI soạn chiến lược, CV và Cover Letter chuẩn Web3</div>
+  <div class="g2">
+    <div class="card">
+      <label>ROLE</label>
+      <select id="j-role">
+        <option>Community Moderator</option>
+        <option>Brand Ambassador</option>
+        <option>Discord Moderator</option>
+        <option>Telegram Moderator</option>
+        <option>Content Writer (Web3)</option>
+        <option>Social Media Manager</option>
+        <option>Community Manager</option>
+        <option>Marketing / Growth</option>
+        <option>Business Development</option>
+        <option>Translator EN-VI</option>
+        <option>Project Manager</option>
+      </select>
+      <label>KỸ NĂNG</label>
+      <textarea id="j-sk" placeholder="vd: Quản lý Discord/Telegram, tạo content, dịch EN-VI, hiểu DeFi/NFT, dùng AI tools..." style="min-height:75px"></textarea>
+      <label>KINH NGHIỆM</label>
+      <textarea id="j-ex" placeholder="vd: Mod cho dự án X 3 tháng, ambassador cho Y, content TikTok..." style="min-height:65px"></textarea>
+      <div class="g2">
+        <div><label>NGÔN NGỮ</label><select id="j-lg"><option value="Vietnamese">Tiếng Việt</option><option value="English">English</option></select></div>
+        <div><label>OUTPUT</label>
+          <select id="j-out">
+            <option value="strategy">Chiến lược apply</option>
+            <option value="cv">CV / Resume</option>
+            <option value="cover">Cover Letter</option>
+            <option value="all">Tất cả 3 phần</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-run" id="btn-job" onclick="runJob()">💼 Phân tích & Soạn ngay</button>
+    </div>
+    <div>
+      <div class="out show" id="out-job" style="min-height:380px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px">
+        <div style="text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px"><div style="font-size:30px;margin-bottom:10px">💼</div>Điền thông tin & bấm phân tích</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSLATOR -->
+<div id="p-tr" class="panel">
+  <div class="stitle">// WEB3 TRANSLATOR</div>
+  <div class="sdesc">Dịch thông báo dự án sang VI / EN — giữ nguyên thuật ngữ crypto, token name, số liệu</div>
+  <div class="g2">
+    <div class="card">
+      <label>NỘI DUNG GỐC</label>
+      <textarea id="tr-in" placeholder="Paste announcement, update, whitepaper excerpt..." style="min-height:150px"></textarea>
+      <div class="g2">
+        <div><label>DỊCH SANG</label>
+          <select id="tr-to">
+            <option value="Vietnamese">Tiếng Việt</option>
+            <option value="English">English</option>
+            <option value="both">Cả EN + VI</option>
+          </select>
+        </div>
+        <div><label>KIỂU DỊCH</label>
+          <select id="tr-st">
+            <option value="natural">Tự nhiên (giữ thuật ngữ)</option>
+            <option value="formal">Trang trọng</option>
+            <option value="newbie">Đơn giản cho newbie</option>
+          </select>
+        </div>
+      </div>
+      <label>THUẬT NGỮ GIỮ NGUYÊN (tuỳ chọn)</label>
+      <input id="tr-tm" placeholder="vd: staking, AVS, epoch, restaking...">
+      <button class="btn-run" id="btn-tr" onclick="runTranslate()">🌐 Dịch ngay</button>
+    </div>
+    <div>
+      <div class="out show" id="out-tr" style="min-height:340px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px">
+        <div style="text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px"><div style="font-size:30px;margin-bottom:10px">🌐</div>Paste nội dung & bấm dịch</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT CREATOR -->
+<div id="p-cc" class="panel">
+  <div class="stitle">// CONTENT & THREAD CREATOR</div>
+  <div class="sdesc">Nhập thông tin dự án → AI tạo Thread Twitter, Telegram Announcement, Discord Post theo đúng style</div>
+  <div class="g2">
+    <div class="card">
+      <div class="g2">
+        <div><label>TÊN DỰ ÁN</label><input id="cc-name" placeholder="vd: EigenLayer, Berachain..."></div>
+        <div><label>LOẠI NỘI DUNG</label>
+          <select id="cc-type">
+            <option value="twitter_thread">Twitter / X Thread</option>
+            <option value="telegram">Telegram Announcement</option>
+            <option value="discord">Discord Post</option>
+            <option value="ambassador_report">Ambassador Report</option>
+            <option value="alpha_call">Alpha Call Post</option>
+          </select>
+        </div>
+      </div>
+      <label>KEY POINTS</label>
+      <textarea id="cc-info" placeholder="Nhập key features, tokenomics, airdrop info, sự kiện sắp tới..."></textarea>
+      <div class="g2">
+        <div><label>TONE</label>
+          <select id="cc-tone">
+            <option value="professional">Professional</option>
+            <option value="hype">Hype / Bullish</option>
+            <option value="educational">Educational</option>
+            <option value="casual">Casual</option>
+            <option value="fud_busting">FUD Busting</option>
+          </select>
+        </div>
+        <div><label>NGÔN NGỮ</label>
+          <select id="cc-lg">
+            <option value="English">English</option>
+            <option value="Vietnamese">Tiếng Việt</option>
+            <option value="both">Cả EN + VI</option>
+          </select>
+        </div>
+      </div>
+      <label>HASHTAG ƯU TIÊN (tuỳ chọn)</label>
+      <input id="cc-tags" placeholder="vd: #DeFi #Web3 #Airdrop">
+      <button class="btn-run" id="btn-cc" onclick="runContent()">✏️ Tạo nội dung</button>
+    </div>
+    <div>
+      <div class="out show" id="out-cc" style="min-height:400px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px">
+        <div style="text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px"><div style="font-size:30px;margin-bottom:10px">✏️</div>Điền thông tin & bấm tạo nội dung</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DUE DILIGENCE -->
+<div id="p-dd" class="panel">
+  <div class="stitle">// PROJECT DUE DILIGENCE</div>
+  <div class="sdesc">Phân tích dự án Web3: tokenomics, team, roadmap, rủi ro — trước khi làm Mod/Ambassador hay invest</div>
+  <div class="g2">
+    <div class="card">
+      <div class="g2">
+        <div><label>TÊN DỰ ÁN</label><input id="dd-name" placeholder="vd: EigenLayer..."></div>
+        <div><label>CHAIN</label><input id="dd-chain" placeholder="vd: Ethereum, Solana..."></div>
+      </div>
+      <label>MÔ TẢ / WHITEPAPER (tuỳ chọn)</label>
+      <textarea id="dd-desc" placeholder="Paste mô tả dự án..." style="min-height:75px"></textarea>
+      <div class="g3">
+        <div><label>LOẠI</label>
+          <select id="dd-cat">
+            <option>DeFi</option><option>L1/L2</option><option>NFT/Gaming</option>
+            <option>Infrastructure</option><option>AI x Web3</option><option>RWA</option><option>DAO</option>
+          </select>
+        </div>
+        <div><label>MỤC ĐÍCH</label>
+          <select id="dd-pur">
+            <option value="ambassador">Mod / Ambassador</option>
+            <option value="invest">Đầu tư / Airdrop</option>
+            <option value="report">Báo cáo</option>
+          </select>
+        </div>
+        <div><label>NGÔN NGỮ</label>
+          <select id="dd-lg"><option value="Vietnamese">Tiếng Việt</option><option value="English">English</option></select>
+        </div>
+      </div>
+      <button class="btn-run" id="btn-dd" onclick="runDD()">🔍 Phân tích dự án</button>
+    </div>
+    <div>
+      <div class="out show" id="out-dd" style="min-height:400px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--border);border-radius:10px">
+        <div style="text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px"><div style="font-size:30px;margin-bottom:10px">🔍</div>Nhập thông tin & bấm phân tích</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BINANCE SCAN -->
+<div id="p-bnb" class="panel">
+  <div class="stitle">// BINANCE TOKEN SCANNER</div>
+  <div class="sdesc">Tải danh sách token Binance realtime → chọn token → AI phân tích tiềm năng 10-20 ngày tới</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div><div style="font-family:var(--mono);font-size:11px;color:var(--muted2)">USDT PAIRS — BINANCE</div><div id="bnb-cnt" style="font-size:11px;color:var(--muted);margin-top:2px">Đang tải...</div></div>
+      <button class="btn-sm" onclick="loadBnb()">⟳ Refresh</button>
+    </div>
+    <input id="bnb-q" placeholder="🔍 Tìm token... vd: BTC, ETH, SOL" oninput="filterBnb()" style="margin-top:12px">
+    <div class="tgrid" id="bnb-list"><div class="ldg"><div class="spin"></div>Đang kết nối Binance API...</div></div>
+  </div>
+  <div class="card" id="bnb-sel" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div><div style="font-family:var(--mono);font-size:16px;font-weight:700" id="bnb-sname">-</div><div style="font-size:12px;color:var(--muted2)" id="bnb-sprice">-</div></div>
+      <span id="bnb-sbadge" class="badge b-blue">-</span>
+    </div>
+    <div class="srow" id="bnb-stats"></div>
+    <button class="btn-run" id="btn-bnb" onclick="runBnb()">📈 Quét & Phân tích tiềm năng</button>
+  </div>
+  <div class="out" id="out-bnb"></div>
+</div>
+
+<!-- MEMECOIN -->
+<div id="p-meme" class="panel">
+  <div class="stitle">// MEMECOIN RISK CHECKER</div>
+  <div class="sdesc">Tìm token trên DexScreener → phân tích rủi ro, liquidity, volume — trước khi ape</div>
+  <div class="card" style="margin-bottom:14px">
+    <label style="margin-top:0">TÌM TOKEN / CONTRACT ADDRESS</label>
+    <div class="dex-row">
+      <input id="me-q" placeholder="Nhập tên token hoặc contract address (vd: PEPE, 0x...)" onkeydown="if(event.key==='Enter')searchDex()">
+      <button class="btn-sm" style="padding:10px 16px" onclick="searchDex()">Tìm 🔍</button>
+    </div>
+    <div id="dex-res" style="margin-top:11px"></div>
+  </div>
+  <div class="card" id="me-sel" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:13px">
+      <div><div style="font-family:var(--mono);font-size:15px;font-weight:700" id="me-name">-</div><div style="font-size:12px;color:var(--muted2)" id="me-info">-</div></div>
+      <span class="badge b-amber">MEMECOIN</span>
+    </div>
+    <div class="srow" id="me-stats"></div>
+    <div style="margin-bottom:13px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:11px;color:var(--muted2);font-family:var(--mono)">MỨC ĐỘ RỦI RO</span>
+        <span style="font-size:12px;font-weight:700;font-family:var(--mono)" id="me-rv">-</span>
+      </div>
+      <div class="rbar"><div class="rfill" id="me-rb" style="width:0;background:var(--accent5)"></div></div>
+    </div>
+    <button class="btn-run" id="btn-me" onclick="runMeme()">🔥 Phân tích rủi ro đầy đủ</button>
+  </div>
+  <div class="out" id="out-me"></div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <span style="font-size:15px;font-weight:700;color:var(--accent)">LoChym</span> · WEB3 PRO HUB · FREE TOOL · POWERED BY CLAUDE AI<br>
+  <span style="opacity:.35;margin-top:3px;display:block">Không phải lời khuyên tài chính — DYOR trước khi invest</span>
+</div>
+
+<script>
+// ── TABS ──────────────────────────────────────────────────
+const TABS=['live','job','tr','cc','dd','bnb','meme'];
+function sw(t){
+  TABS.forEach((x,i)=>{
+    document.getElementById('p-'+x).classList.toggle('active',x===t);
+    document.querySelectorAll('.nb')[i].classList.toggle('active',x===t);
+  });
+  if(t==='bnb'&&!bnbReady) loadBnb();
+}
+
+// ── AI CALL ───────────────────────────────────────────────
+async function ai(prompt, maxT=1200){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:maxT,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  const d=await r.json();
+  if(d.error) throw new Error(d.error.message||'API error');
+  return (d.content&&d.content[0]&&d.content[0].text)||'';
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtV(v){return v>=1e9?'$'+(v/1e9).toFixed(2)+'B':v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(0)+'K':'$'+Math.round(v)}
+function ago(d){const h=Math.floor((Date.now()-d)/3600000);return h<1?'Vừa đăng':h<24?h+'h trước':Math.floor(h/24)+'ngày trước'}
+
+function setBtn(id,on,lbl){
+  const b=document.getElementById(id); if(!b)return;
+  b.disabled=on;
+  b.innerHTML=on?'<div class="spin"></div> Đang xử lý...':(lbl||b._lbl||'Run');
+  if(lbl)b._lbl=lbl;
+}
+
+function showOut(id,text){
+  const el=document.getElementById(id);
+  el.className='out show';
+  el.innerHTML='<div class="out-hdr"><span>● OUTPUT</span><button class="cpbtn" onclick="doCopy(\''+id+'-b\')">COPY</button></div><div class="out-body" id="'+id+'-b">'+esc(text)+'</div>';
+}
+
+function loadOut(id,msg){
+  const el=document.getElementById(id);
+  el.className='out show';
+  el.innerHTML='<div class="ldg"><div class="spin"></div>'+esc(msg)+'</div>';
+}
+
+function doCopy(id){
+  const el=document.getElementById(id); if(!el)return;
+  navigator.clipboard.writeText(el.innerText).then(()=>{
+    const btn=el.closest('.out').querySelector('.cpbtn');
+    if(btn){btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY',1500);}
+  });
+}
+
+// ── LIVE JOBS ─────────────────────────────────────────────
+let allJobs=[];
+
+function catJob(s){
+  const t=s.toLowerCase();
+  if(/mod|community|discord|telegram|support/.test(t))return 'community';
+  if(/content|writer|copy|translat/.test(t))return 'content';
+  if(/market|social|growth|seo/.test(t))return 'marketing';
+  if(/develop|engineer|solidity|rust|smart contract|frontend|backend/.test(t))return 'dev';
+  if(/bd|business dev|partner|sales/.test(t))return 'bd';
+  return 'other';
+}
+
+function staticJobs(){
+  const n=Date.now();
+  const h=ms=>(new Date(n-ms*3600000));
+  return [
+    {id:'s01',title:'Community Moderator',co:'LayerZero Labs',loc:'Remote',remote:1,tags:['Discord','Telegram','DeFi'],url:'https://web3.career/community-moderator-jobs',dt:h(1),src:'web3.career',sc:'#10b981',cat:'community',sal:'$1k–3k/mo'},
+    {id:'s02',title:'Discord Moderator',co:'Berachain',loc:'Remote Worldwide',remote:1,tags:['Discord','NFT','Web3'],url:'https://web3.career/discord-moderator-jobs',dt:h(3),src:'web3.career',sc:'#10b981',cat:'community',sal:''},
+    {id:'s03',title:'Brand Ambassador – Vietnam',co:'Binance',loc:'Vietnam / Remote',remote:1,tags:['Ambassador','Marketing','VN'],url:'https://cryptojobslist.com/ambassador',dt:h(5),src:'CryptoJobsList',sc:'#63b3ed',cat:'marketing',sal:'Commission'},
+    {id:'s04',title:'Content Writer EN/VI',co:'CoinGecko',loc:'Remote',remote:1,tags:['Content','Crypto','Vietnamese'],url:'https://cryptojobslist.com/content',dt:h(9),src:'CryptoJobsList',sc:'#63b3ed',cat:'content',sal:'$800–1.5k/mo'},
+    {id:'s05',title:'Telegram Community Manager',co:'Arbitrum DAO',loc:'Remote',remote:1,tags:['Telegram','DAO','L2'],url:'https://remote3.co',dt:h(14),src:'Remote3',sc:'#7c3aed',cat:'community',sal:'$2k–4k/mo'},
+    {id:'s06',title:'Social Media Manager',co:'Uniswap Foundation',loc:'Remote',remote:1,tags:['Twitter','Social','DeFi'],url:'https://remote3.co',dt:h(20),src:'Remote3',sc:'#7c3aed',cat:'marketing',sal:'$3k–5k/mo'},
+    {id:'s07',title:'Web3 Translator EN→VI',co:'Coin68',loc:'Vietnam',remote:1,tags:['Translation','Vietnamese','Crypto'],url:'https://web3.career',dt:h(28),src:'web3.career',sc:'#10b981',cat:'content',sal:'Part-time'},
+    {id:'s08',title:'NFT Community Moderator',co:'Magic Eden',loc:'Remote',remote:1,tags:['NFT','Discord','Mod'],url:'https://cryptojobslist.com',dt:h(35),src:'CryptoJobsList',sc:'#63b3ed',cat:'community',sal:'$800–1.8k/mo'},
+    {id:'s09',title:'Growth & Marketing Lead',co:'Aptos Labs',loc:'Remote APAC',remote:1,tags:['Growth','Marketing','L1'],url:'https://remote3.co',dt:h(40),src:'Remote3',sc:'#7c3aed',cat:'marketing',sal:'$4k–8k/mo'},
+    {id:'s10',title:'Community Manager SEA',co:'OKX',loc:'Southeast Asia',remote:1,tags:['Community','Exchange','SEA'],url:'https://cryptojobslist.com',dt:h(48),src:'CryptoJobsList',sc:'#63b3ed',cat:'community',sal:'$2k–4k/mo'},
+    {id:'s11',title:'Ambassador Program Lead',co:'Starknet',loc:'Remote',remote:1,tags:['Ambassador','L2','ZK'],url:'https://web3.career',dt:h(55),src:'web3.career',sc:'#10b981',cat:'bd',sal:'Token rewards'},
+    {id:'s12',title:'DeFi Content Creator',co:'Aave',loc:'Remote',remote:1,tags:['DeFi','Content','Twitter'],url:'https://remote3.co',dt:h(62),src:'Remote3',sc:'#7c3aed',cat:'content',sal:'$1k–3k/mo'},
+    {id:'s13',title:'Crypto Customer Support',co:'Bybit',loc:'Remote',remote:1,tags:['Support','Exchange','Chat'],url:'https://cryptojobslist.com',dt:h(70),src:'CryptoJobsList',sc:'#63b3ed',cat:'other',sal:'$600–1.2k/mo'},
+    {id:'s14',title:'BD & Partnerships – APAC',co:'Chainlink Labs',loc:'Remote APAC',remote:1,tags:['BD','Oracle','Enterprise'],url:'https://web3.career',dt:h(80),src:'web3.career',sc:'#10b981',cat:'bd',sal:'$5k–10k/mo'},
+    {id:'s15',title:'DAO Community Coordinator',co:'MakerDAO',loc:'Remote',remote:1,tags:['DAO','Governance','DeFi'],url:'https://remote3.co',dt:h(90),src:'Remote3',sc:'#7c3aed',cat:'community',sal:'$2k–5k/mo'},
+    {id:'s16',title:'Web3 Marketing Intern',co:'Polygon Labs',loc:'Remote',remote:1,tags:['Intern','Marketing','L2'],url:'https://cryptojobslist.com',dt:h(100),src:'CryptoJobsList',sc:'#63b3ed',cat:'marketing',sal:'Stipend'},
+    {id:'s17',title:'Community Lead – Vietnam',co:'Ronin Network',loc:'Vietnam / Remote',remote:1,tags:['Community','Gaming','Vietnam'],url:'https://web3.career',dt:h(110),src:'web3.career',sc:'#10b981',cat:'community',sal:'$1.5k–3k/mo'},
+    {id:'s18',title:'Alpha Caller / Researcher',co:'Private DAO',loc:'Remote',remote:1,tags:['Research','Alpha','DeFi'],url:'https://remote3.co',dt:h(120),src:'Remote3',sc:'#7c3aed',cat:'content',sal:'Revenue share'},
+  ];
+}
+
+async function loadJobs(){
+  document.getElementById('lj-list').innerHTML='<div class="ldg"><div class="spin"></div>Đang quét việc làm từ các nguồn Web3...</div>';
+  document.getElementById('st-tot').textContent='—';
+  document.getElementById('st-rem').textContent='—';
+  document.getElementById('st-new').textContent='—';
+
+  let jobs=staticJobs();
+
+  // Try Arbeitnow (CORS-friendly public API)
+  try{
+    const r=await fetch('https://www.arbeitnow.com/api/job-board-api');
+    const d=await r.json();
+    const w3=(d.data||[]).filter(j=>{
+      const txt=((j.title||'')+' '+(j.tags||[]).join(' ')+(j.description||'')).toLowerCase();
+      return /web3|blockchain|crypto|defi|nft|dao|solidity|community mod|discord|telegram mod/i.test(txt);
+    }).slice(0,15);
+    w3.forEach(j=>{
+      jobs.push({
+        id:'an-'+j.slug,
+        title:j.title,co:j.company_name||'Company',
+        loc:j.location||'Remote',remote:j.remote?1:0,
+        tags:(j.tags||[]).slice(0,3),
+        url:j.url||'https://arbeitnow.com',
+        dt:j.created_at?new Date(j.created_at):new Date(),
+        src:'Arbeitnow',sc:'#f59e0b',
+        cat:catJob(j.title+' '+(j.tags||[]).join(' ')),sal:''
+      });
+    });
+  }catch(e){/* CORS blocked, use static only */}
+
+  // Deduplicate & sort
+  const seen=new Set();
+  jobs=jobs.filter(j=>{if(seen.has(j.id))return false;seen.add(j.id);return true;})
+    .sort((a,b)=>new Date(b.dt)-new Date(a.dt));
+
+  allJobs=jobs;
+  renderJobs(jobs);
+  const rem=jobs.filter(j=>j.remote).length;
+  const cutoff=new Date(Date.now()-86400000);
+  const newc=jobs.filter(j=>new Date(j.dt)>=cutoff).length;
+  document.getElementById('st-tot').textContent=jobs.length;
+  document.getElementById('st-rem').textContent=rem;
+  document.getElementById('st-new').textContent=newc;
+}
+
+function renderJobs(jobs){
+  const el=document.getElementById('lj-list');
+  if(!jobs.length){el.innerHTML='<div style="text-align:center;padding:36px;color:var(--muted);font-family:var(--mono);font-size:12px">Không tìm thấy job phù hợp.</div>';return;}
+  el.innerHTML=jobs.map(j=>`
+    <div class="jcard">
+      <div class="jtop">
+        <div style="flex:1"><div class="jtitle">${esc(j.title)}</div><div class="jco">${esc(j.co)} &nbsp;·&nbsp; ${esc(j.loc)}</div></div>
+        <a href="${j.url}" target="_blank" class="japply">Apply ↗</a>
+      </div>
+      <div class="jtags">
+        ${j.remote?'<span class="jtag jt-remote">Remote</span>':''}
+        ${j.sal?'<span class="jtag jt-type">'+esc(j.sal)+'</span>':''}
+        ${(j.tags||[]).slice(0,3).map(t=>'<span class="jtag jt-type">'+esc(t)+'</span>').join('')}
+        <span class="jtag jt-date">${ago(new Date(j.dt))}</span>
+      </div>
+      <div class="jsrc" style="color:${j.sc}">● ${esc(j.src)}</div>
+    </div>`).join('');
+}
+
+function filterJobs(){
+  const q=document.getElementById('lj-q').value.toLowerCase();
+  const cat=document.getElementById('lj-cat').value;
+  const rem=document.getElementById('lj-rem').value;
+  renderJobs(allJobs.filter(j=>{
+    const txt=(j.title+' '+j.co+' '+(j.tags||[]).join(' ')).toLowerCase();
+    if(q&&!txt.includes(q))return false;
+    if(cat&&j.cat!==cat)return false;
+    if(rem&&!j.remote)return false;
+    return true;
+  }));
+}
+
+async function aiMatch(){
+  const sk=document.getElementById('lj-skill').value.trim();
+  if(!sk){alert('Nhập kỹ năng');return;}
+  const btn=document.querySelector('[onclick="aiMatch()"]');
+  btn.textContent='Đang phân tích...';btn.disabled=true;
+  const res=document.getElementById('lj-match');
+  res.style.display='block';res.textContent='AI đang phân tích...';
+  const list=allJobs.slice(0,20).map((j,i)=>i+1+'. '+j.title+' tại '+j.co+' ('+j.src+')'+(j.sal?' - '+j.sal:'')).join('\n');
+  const prompt='Bạn là Web3 Career Coach. Phân tích ngắn gọn bằng Tiếng Việt.\n\nKỹ năng ứng viên: '+sk+'\n\nDanh sách job hiện có:\n'+list+'\n\nTrả lời:\n✅ TOP 3 JOB PHÙ HỢP NHẤT (số thứ tự + lý do ngắn)\n💡 KỸ NĂNG CẦN BỔ SUNG\n🎯 LỜI KHUYÊN để nổi bật\n\nNgắn gọn, thực tế, dưới 180 từ.';
+  try{const t=await ai(prompt,600);res.textContent=t;}
+  catch(e){res.textContent='Lỗi: '+e.message;}
+  btn.textContent='🤖 Match';btn.disabled=false;
+}
+
+// ── JOB FINDER ────────────────────────────────────────────
+async function runJob(){
+  const role=document.getElementById('j-role').value;
+  const sk=document.getElementById('j-sk').value.trim();
+  if(!sk){alert('Vui lòng nhập kỹ năng');return;}
+  const ex=document.getElementById('j-ex').value.trim();
+  const lg=document.getElementById('j-lg').value;
+  const out=document.getElementById('j-out').value;
+  const LBL='💼 Phân tích & Soạn ngay';
+  setBtn('btn-job',true,LBL);loadOut('out-job','Đang phân tích profile và soạn tài liệu...');
+  const omap={
+    strategy:'Viết CHIEN LUOC APPLY chi tiet cho vi tri '+role+' Web3: 1) Platform tim job tot nhat, 2) Cach tiep can, 3) Tips noi bat, 4) Ky nang can bo sung, 5) Timeline apply.',
+    cv:'Tao CV/Resume Web3 hoan chinh cho vi tri '+role+'. Bao gom: Summary, Skills, Experience, Projects, Education. Format ro rang, bullet points impact-driven.',
+    cover:'Viet Cover Letter Web3 hap dan cho vi tri '+role+'. Mo dau thu hut, neu gia tri mang lai, ket thuc CTA. Duoi 250 tu.',
+    all:'Tao DAY DU 3 phan:\n\nPHAN 1 - CHIEN LUOC APPLY\nChien luoc tim va apply job '+role+' Web3.\n\nPHAN 2 - CV/RESUME\nCV hoan chinh, chuyen nghiep.\n\nPHAN 3 - COVER LETTER\nCover letter ngan gon, duoi 250 tu.'
+  };
+  const prompt='Ban la Web3 Career Coach. Tra loi bang '+lg+'.\n\nThong tin ung vien:\n- Role: '+role+'\n- Ky nang: '+sk+'\n- Kinh nghiem: '+(ex||'Chua co kinh nghiem Web3')+'\n\n'+omap[out]+'\n\nYeu cau: Cu the, actionable, phu hop Web3 2025-2026. Dung emoji phan section.';
+  try{const t=await ai(prompt,1500);showOut('out-job',t);}
+  catch(e){showOut('out-job','Loi: '+e.message);}
+  setBtn('btn-job',false,LBL);
+}
+
+// ── TRANSLATOR ────────────────────────────────────────────
+async function runTranslate(){
+  const inp=document.getElementById('tr-in').value.trim();
+  if(!inp){alert('Vui lòng paste nội dung cần dịch');return;}
+  const to=document.getElementById('tr-to').value;
+  const st=document.getElementById('tr-st').value;
+  const tm=document.getElementById('tr-tm').value.trim();
+  const LBL='🌐 Dịch ngay';
+  setBtn('btn-tr',true,LBL);loadOut('out-tr','Đang dịch...');
+  const smap={natural:'tu nhien, giu nguyen ten token, so lieu, thuat ngu Web3',formal:'trang trong, chuyen nghiep',newbie:'don gian, de hieu cho nguoi moi, giai thich ngan thuat ngu ky thuat'};
+  const prompt='Ban la dich gia chuyen nganh Web3/Crypto. Dich sang '+(to==='both'?'ca English VA Tieng Viet (tach biet ro rang)':to)+'.\nKieu dich: '+smap[st]+'\n'+(tm?'Thuat ngu PHAI giu nguyen: '+tm+'\n':'')+'Quy tac: Khong dich ten token, ten du an, dia chi contract, so lieu %. Giu hashtag nguyen.\nChi tra ra ban dich, khong giai thich them.\n\nNOI DUNG GOC:\n'+inp;
+  try{const t=await ai(prompt,1200);showOut('out-tr',t);}
+  catch(e){showOut('out-tr','Loi: '+e.message);}
+  setBtn('btn-tr',false,LBL);
+}
+
+// ── CONTENT CREATOR ───────────────────────────────────────
+async function runContent(){
+  const name=document.getElementById('cc-name').value.trim();
+  if(!name){alert('Vui lòng nhập tên dự án');return;}
+  const type=document.getElementById('cc-type').value;
+  const info=document.getElementById('cc-info').value.trim();
+  const tone=document.getElementById('cc-tone').value;
+  const lg=document.getElementById('cc-lg').value;
+  const tags=document.getElementById('cc-tags').value.trim();
+  const LBL='✏️ Tạo nội dung';
+  setBtn('btn-cc',true,LBL);loadOut('out-cc','AI đang tạo nội dung...');
+  const tmap={twitter_thread:'Twitter/X Thread (6-8 tweets, danh so 1/ 2/...)',telegram:'Telegram Announcement (format chuan voi emoji)',discord:'Discord Post (co @everyone, embed-friendly)',ambassador_report:'Ambassador Weekly Report',alpha_call:'Alpha Call Post (short, punchy, actionable)'};
+  const nmap={professional:'chuyen nghiep, uy tin',hype:'hype bullish, keu goi manh',educational:'giao duc, giai thich de hieu',casual:'than thien, gan gui',fud_busting:'bac bo FUD, tu tin, dung data'};
+  const prompt='Ban la Web3 Content Creator chuyen nghiep. Viet bang '+(lg==='both'?'ca English VA Tieng Viet (2 phien ban tach biet)':lg)+'.\n\nTao '+tmap[type]+' cho du an: '+name+'\nKey points: '+(info||'(Tao noi dung tong quat)')+'\nTone: '+nmap[tone]+'\nHashtag: '+(tags||'tu them phu hop')+'\n\nYeu cau: Hap dan, co call-to-action. Chi tra ra noi dung, khong giai thich.';
+  try{const t=await ai(prompt,1200);showOut('out-cc',t);}
+  catch(e){showOut('out-cc','Loi: '+e.message);}
+  setBtn('btn-cc',false,LBL);
+}
+
+// ── DUE DILIGENCE ─────────────────────────────────────────
+async function runDD(){
+  const name=document.getElementById('dd-name').value.trim();
+  if(!name){alert('Vui lòng nhập tên dự án');return;}
+  const chain=document.getElementById('dd-chain').value.trim();
+  const desc=document.getElementById('dd-desc').value.trim();
+  const cat=document.getElementById('dd-cat').value;
+  const pur=document.getElementById('dd-pur').value;
+  const lg=document.getElementById('dd-lg').value;
+  const LBL='🔍 Phân tích dự án';
+  setBtn('btn-dd',true,LBL);loadOut('out-dd','AI đang phân tích dự án...');
+  const pmap={ambassador:'danh gia nen nhan lam Mod/Ambassador khong (uy tin, reward, rui ro reputation)',invest:'danh gia tiem nang dau tu va airdrop',report:'tong hop bao cao noi bo'};
+  const prompt='Ban la chuyen gia phan tich Web3. Phan tich bang '+lg+'.\n\nDu an: '+name+' | Chain: '+(chain||'?')+' | Loai: '+cat+'\nMo ta: '+(desc||'Phan tich tu thong tin pho bien')+'\nMuc dich: '+pmap[pur]+'\n\nCau truc:\nTONG QUAN (2-3 cau)\nDIEM MANH (3-4 bullet)\nRUI RO / RED FLAGS (3-4 bullet, thanh that)\nTOKENOMICS (supply, allocation, vesting)\nROADMAP (milestone gan nhat)\nCANH TRANH (so sanh 1-2 doi thu)\nKET LUAN cho muc dich: '+pmap[pur]+'\nDIEM TONG: X/10 + ly do\n\nDung emoji phan section. Thanh that, khach quan.';
+  try{const t=await ai(prompt,1400);showOut('out-dd',t);}
+  catch(e){showOut('out-dd','Loi: '+e.message);}
+  setBtn('btn-dd',false,LBL);
+}
+
+// ── BINANCE ───────────────────────────────────────────────
+let bnbAll=[],bnbSel=null,bnbReady=false;
+
+async function loadBnb(){
+  bnbReady=true;
+  const list=document.getElementById('bnb-list');
+  list.innerHTML='<div class="ldg"><div class="spin"></div>Đang kết nối Binance...</div>';
+  document.getElementById('bnb-cnt').textContent='Đang tải...';
+  try{
+    const r=await fetch('https://api.binance.com/api/v3/ticker/24hr');
+    const d=await r.json();
+    bnbAll=d.filter(t=>t.symbol.endsWith('USDT')&&parseFloat(t.quoteVolume)>1000000)
+      .sort((a,b)=>parseFloat(b.quoteVolume)-parseFloat(a.quoteVolume)).slice(0,200);
+    document.getElementById('bnb-cnt').textContent=bnbAll.length+' USDT pairs (vol > $1M/24h)';
+    renderBnb(bnbAll);
+  }catch(e){
+    list.innerHTML='<div style="color:var(--accent5);font-size:12px;padding:12px">Không tải được — kiểm tra kết nối mạng.</div>';
+  }
+}
+
+function renderBnb(tokens){
+  const el=document.getElementById('bnb-list');
+  if(!tokens.length){el.innerHTML='<div style="color:var(--muted);font-size:12px;padding:10px">Không tìm thấy</div>';return;}
+  el.innerHTML=tokens.slice(0,100).map(t=>{
+    const sym=t.symbol.replace('USDT','');
+    const chg=parseFloat(t.priceChangePercent);
+    const p=parseFloat(t.lastPrice);
+    return '<div class="ti" onclick="selBnb(\''+t.symbol+'\')" id="ti-'+t.symbol+'"><div><div class="ts">'+sym+'</div><div class="tp">$'+(p<1?p.toFixed(4):p<100?p.toFixed(2):Math.round(p))+'</div></div><div class="tc '+(chg>=0?'up':'dn')+'">'+(chg>=0?'+':'')+chg.toFixed(1)+'%</div></div>';
+  }).join('');
+}
+
+function filterBnb(){
+  const q=document.getElementById('bnb-q').value.toUpperCase();
+  renderBnb(q?bnbAll.filter(t=>t.symbol.includes(q)):bnbAll);
+}
+
+function selBnb(sym){
+  document.querySelectorAll('.ti').forEach(e=>e.classList.remove('sel'));
+  const el=document.getElementById('ti-'+sym);if(el)el.classList.add('sel');
+  const t=bnbAll.find(x=>x.symbol===sym);if(!t)return;
+  bnbSel=t;
+  const base=sym.replace('USDT','');
+  const chg=parseFloat(t.priceChangePercent);
+  const p=parseFloat(t.lastPrice);
+  document.getElementById('bnb-sname').textContent=base+'/USDT';
+  document.getElementById('bnb-sprice').textContent='$'+(p<0.001?p.toFixed(6):p<1?p.toFixed(4):p.toFixed(2))+' · Binance Live';
+  const b=document.getElementById('bnb-sbadge');
+  if(chg>=5){b.className='badge b-green';b.textContent='PUMPING';}
+  else if(chg>0){b.className='badge b-blue';b.textContent='BULLISH';}
+  else if(chg>-5){b.className='badge b-amber';b.textContent='BEARISH';}
+  else{b.className='badge b-red';b.textContent='DUMPING';}
+  const vol=parseFloat(t.quoteVolume);
+  document.getElementById('bnb-stats').innerHTML=
+    '<div class="sc"><div class="sc-v '+(chg>=0?'up':'dn')+'">'+(chg>=0?'+':'')+chg.toFixed(2)+'%</div><div class="sc-l">24h Change</div></div>'+
+    '<div class="sc"><div class="sc-v">'+fmtV(vol)+'</div><div class="sc-l">Volume 24h</div></div>'+
+    '<div class="sc"><div class="sc-v">$'+parseFloat(t.highPrice).toFixed(p<1?4:2)+'</div><div class="sc-l">24h High</div></div>'+
+    '<div class="sc"><div class="sc-v">$'+parseFloat(t.lowPrice).toFixed(p<1?4:2)+'</div><div class="sc-l">24h Low</div></div>';
+  document.getElementById('bnb-sel').style.display='block';
+  document.getElementById('out-bnb').className='out';
+}
+
+async function runBnb(){
+  if(!bnbSel)return;
+  const t=bnbSel;
+  const sym=t.symbol.replace('USDT','');
+  const LBL='📈 Quét & Phân tích tiềm năng';
+  setBtn('btn-bnb',true,LBL);loadOut('out-bnb','Đang phân tích '+sym+'...');
+  const chg=parseFloat(t.priceChangePercent);
+  const p=parseFloat(t.lastPrice);
+  const vol=parseFloat(t.quoteVolume);
+  const prompt='Ban la crypto analyst. Phan tich ngan gon bang Tieng Viet.\n\nDu lieu '+sym+'/USDT tu Binance:\n- Gia: $'+p+'\n- Thay doi 24h: '+chg.toFixed(2)+'%\n- Volume 24h: $'+Math.round(vol).toLocaleString()+'\n- High/Low 24h: $'+t.highPrice+' / $'+t.lowPrice+'\n\nPhan tich:\nNHAN XET HIEN TAI (momentum, trend, volume)\nKICH BAN 10-20 NGAY TOI (bullish: target gia / bearish: support)\nXAC SUAT TANG/GIAM (uoc tinh)\nYEU TO CAN THEO DOI\nKHUYEN NGHI (mua/giu/cho/tranh)\n\nDung emoji phan section. Luu y: khong phai loi khuyen tai chinh.';
+  try{const text=await ai(prompt,1000);showOut('out-bnb',text);}
+  catch(e){showOut('out-bnb','Loi: '+e.message);}
+  setBtn('btn-bnb',false,LBL);
+}
+
+// ── MEMECOIN ──────────────────────────────────────────────
+let memeSel=null;
+
+async function searchDex(){
+  const q=document.getElementById('me-q').value.trim();
+  if(!q){alert('Nhập tên token hoặc contract address');return;}
+  const res=document.getElementById('dex-res');
+  res.innerHTML='<div class="ldg"><div class="spin"></div>Đang tìm trên DexScreener...</div>';
+  document.getElementById('me-sel').style.display='none';
+  document.getElementById('out-me').className='out';
+  try{
+    const r=await fetch('https://api.dexscreener.com/latest/dex/search?q='+encodeURIComponent(q));
+    const d=await r.json();
+    const pairs=(d.pairs||[]).slice(0,8);
+    if(!pairs.length){res.innerHTML='<div style="color:var(--muted);font-size:12px;padding:8px">Không tìm thấy.</div>';return;}
+    window._dpairs=pairs;
+    res.innerHTML=pairs.map((p,i)=>{
+      const chg=p.priceChange&&p.priceChange.h24||0;
+      const vol=p.volume&&p.volume.h24||0;
+      const liq=p.liquidity&&p.liquidity.usd||0;
+      return '<div class="ti" style="margin-bottom:6px;border-radius:8px;height:auto;padding:10px" onclick="selMeme('+i+')"><div style="flex:1"><div style="font-family:var(--mono);font-size:13px;font-weight:700">'+(p.baseToken&&p.baseToken.symbol||'?')+' <span style="color:var(--muted);font-size:10px">/ '+(p.quoteToken&&p.quoteToken.symbol||'?')+'</span></div><div style="font-size:11px;color:var(--muted2)">'+(p.dexId||'')+' · '+(p.chainId||'')+' · Liq: '+fmtV(liq)+' · Vol: '+fmtV(vol)+'</div></div><div style="text-align:right"><div style="font-family:var(--mono);font-size:12px">$'+parseFloat(p.priceUsd||0).toFixed(8)+'</div><div class="tc '+(chg>=0?'up':'dn')+'">'+(chg>=0?'+':'')+chg.toFixed(1)+'%</div></div></div>';
+    }).join('');
+  }catch(e){res.innerHTML='<div style="color:var(--accent5);font-size:12px;padding:8px">Lỗi kết nối DexScreener.</div>';}
+}
+
+function selMeme(i){
+  const p=window._dpairs[i];if(!p)return;
+  memeSel=p;
+  const chg=p.priceChange&&p.priceChange.h24||0;
+  const vol=p.volume&&p.volume.h24||0;
+  const liq=p.liquidity&&p.liquidity.usd||0;
+  const mc=p.marketCap||0;
+  let risk=50;
+  if(liq<50000)risk+=30;else if(liq<200000)risk+=15;
+  if(vol<10000)risk+=20;
+  if(Math.abs(chg)>50)risk+=15;
+  if(!mc)risk+=10;
+  risk=Math.min(99,Math.max(5,risk));
+  document.getElementById('me-name').textContent=((p.baseToken&&p.baseToken.name)||'?')+' ('+(p.baseToken&&p.baseToken.symbol||'?')+')';
+  document.getElementById('me-info').textContent=(p.dexId||'')+' · '+(p.chainId||'')+' · '+((p.baseToken&&p.baseToken.address||'').slice(0,12))+'...';
+  document.getElementById('me-stats').innerHTML=
+    '<div class="sc"><div class="sc-v '+(chg>=0?'up':'dn')+'">'+(chg>=0?'+':'')+chg.toFixed(1)+'%</div><div class="sc-l">24h</div></div>'+
+    '<div class="sc"><div class="sc-v">'+fmtV(vol)+'</div><div class="sc-l">Volume 24h</div></div>'+
+    '<div class="sc"><div class="sc-v">'+fmtV(liq)+'</div><div class="sc-l">Liquidity</div></div>'+
+    '<div class="sc"><div class="sc-v">'+(mc?fmtV(mc):'N/A')+'</div><div class="sc-l">Mkt Cap</div></div>';
+  const rv=document.getElementById('me-rv');
+  rv.textContent=risk+'% RỦI RO';
+  rv.style.color=risk>70?'var(--accent5)':risk>40?'var(--accent4)':'var(--accent3)';
+  const rb=document.getElementById('me-rb');
+  rb.style.width=risk+'%';
+  rb.style.background=risk>70?'var(--accent5)':risk>40?'var(--accent4)':'var(--accent3)';
+  document.getElementById('me-sel').style.display='block';
+}
+
+async function runMeme(){
+  if(!memeSel)return;
+  const p=memeSel;
+  const sym=(p.baseToken&&p.baseToken.symbol)||'TOKEN';
+  const LBL='🔥 Phân tích rủi ro đầy đủ';
+  setBtn('btn-me',true,LBL);loadOut('out-me','Đang phân tích '+sym+'...');
+  const chg=p.priceChange||{};const vol=p.volume||{};const liq=p.liquidity||{};
+  const prompt='Ban la memecoin analyst thanh that. Phan tich bang Tieng Viet.\n\nDu lieu DexScreener:\n- Token: '+(p.baseToken&&p.baseToken.name||'?')+' ('+sym+')\n- Chain: '+(p.chainId||'?')+' | DEX: '+(p.dexId||'?')+'\n- Contract: '+(p.baseToken&&p.baseToken.address||'?')+'\n- Gia: $'+(p.priceUsd||0)+'\n- Thay doi: 1h '+(chg.h1||0)+'% | 6h '+(chg.h6||0)+'% | 24h '+(chg.h24||0)+'%\n- Volume 24h: $'+Math.round(vol.h24||0)+'\n- Liquidity: $'+Math.round(liq.usd||0)+'\n- Market Cap: $'+Math.round(p.marketCap||0)+'\n\nPhan tich:\nDANH GIA TONG QUAN\nCAC RUI RO CHINH (liq thap, vol bat thuong, dau hieu rug)\nPHAN TICH VOLUME vs LIQUIDITY (healthy khong)\nDAU HIEU CANH BAO (neu co)\nKET LUAN & KHUYEN NGHI\nMUC DO RUI RO: X/10\n\nThanh that, khong ngan canh bao manh neu rui ro cao.';
+  try{const t=await ai(prompt,1000);showOut('out-me',t);}
+  catch(e){showOut('out-me','Loi: '+e.message);}
+  setBtn('btn-me',false,LBL);
+}
+
+// ── INIT ──────────────────────────────────────────────────
+loadJobs();
+</script>
+</body>
+</html>
